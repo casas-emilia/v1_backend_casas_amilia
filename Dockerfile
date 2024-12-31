@@ -19,10 +19,10 @@ RUN ls -l /app
 # Build the application with specific flags for a static binary
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
-# Final stage
+# Final stage (without Go installed)
 FROM alpine:latest
 
-# Add CA certificates
+# Add CA certificates (necessary for HTTPS connections)
 RUN apk --no-cache add ca-certificates
 
 # Set the working directory
@@ -31,11 +31,11 @@ WORKDIR /root/
 # Copy the binary from the builder stage
 COPY --from=builder /app/main .
 
-# Copy the migration folder
+# Copy the migration folder (if required for migrations)
 COPY --from=builder /app/migrate ./migrate
 
 # Expose port 8080
 EXPOSE 8080
 
-# Command to run migrations and then start the application
-CMD ["sh", "-c", "./main"]
+# Command to run the application
+CMD ["./main"]
