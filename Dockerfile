@@ -33,4 +33,7 @@ COPY --from=builder /app/migrate .
 EXPOSE 8080
 
 # Command to run migrations and then start the application
-CMD ["sh", "-c", "./migrate && ./main"]
+#CMD ["sh", "-c", "./migrate && ./main"]
+
+# Solo inicia el servidor
+CMD ["./main"]
