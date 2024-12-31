@@ -14,12 +14,12 @@ func SetupRouter() *gin.Engine {
 
 	// Configuración de CORS
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "http://192.168.0.11:3000"}, // Dominios permitidos
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},           // Métodos HTTP permitidos
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},           // Headers permitidos
-		ExposeHeaders:    []string{"Content-Length", "Authorization"},                   // Headers expuestos al frontend
-		AllowCredentials: true,                                                          // Permitir cookies o credenciales
-		MaxAge:           24 * time.Hour,                                                // Tiempo de caché para preflight
+		AllowOrigins:     []string{"http://localhost:3000", "http://192.168.0.11:3000", "https://v1backendcasasamilia-production.up.railway.app"}, // Dominios permitidos
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},                                                                     // Métodos HTTP permitidos
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},                                                                     // Headers permitidos
+		ExposeHeaders:    []string{"Content-Length", "Authorization"},                                                                             // Headers expuestos al frontend
+		AllowCredentials: true,                                                                                                                    // Permitir cookies o credenciales
+		MaxAge:           24 * time.Hour,                                                                                                          // Tiempo de caché para preflight
 	}))
 
 	/* router.Use(func(c *gin.Context) {
