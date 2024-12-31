@@ -5,13 +5,16 @@ FROM golang:1.23 AS builder
 WORKDIR /app
 
 # Copy go mod and sum files
-COPY go.mod go.sum ./ 
+COPY go.mod go.sum ./
 
 # Download all dependencies
 RUN go mod download
 
 # Copy the source code into the container
 COPY . .
+
+# List the contents of /app to verify the files
+RUN ls -l /app
 
 # Build the application with specific flags for a static binary
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
