@@ -1,6 +1,7 @@
 .git
 .gitignore
+.env
+aws
 README.md
 Dockerfile
 .dockerignore
-.env
