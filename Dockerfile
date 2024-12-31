@@ -1,28 +1,38 @@
-# Etapa 1: Construcción de la aplicación Go
+# Build stage
 FROM golang:1.23 AS builder
 
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copia el código fuente y descarga las dependencias
+# Copy go mod and sum files
+COPY go.mod go.sum ./ 
+
+# Download all dependencies
+RUN go mod download
+
+# Copy the source code into the container
 COPY . .
 
-# Compila el binario
-RUN go mod tidy
-RUN go build -o main .
+# Build the application with specific flags for a static binary
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
-# Etapa 2: Crear la imagen final basada en Alpine
+# Final stage
 FROM alpine:latest
 
-WORKDIR /root/
-
-# Copia los certificados SSL (si es necesario)
+# Add CA certificates
 RUN apk --no-cache add ca-certificates
 
-# Copia el binario compilado desde la etapa anterior
+# Set the working directory
+WORKDIR /root/
+
+# Copy the binary from the builder stage
 COPY --from=builder /app/main .
 
-# Expón el puerto en el que corre la aplicación
+# Copy the migration folder
+COPY --from=builder /app/migrate ./migrate
+
+# Expose port 8080
 EXPOSE 8080
 
-# Comando para ejecutar la aplicación
-CMD ["./main"]
+# Command to run migrations and then start the application
+CMD ["sh", "-c", "./main"]
