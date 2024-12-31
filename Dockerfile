@@ -1,11 +1,11 @@
 # Build stage
-FROM golang:1.21.5 AS builder
+FROM golang:1.23 AS builder
 
 # Set the working directory inside the container
 WORKDIR /app
 
 # Copy go mod and sum files
-COPY go.mod go.sum ./
+COPY go.mod go.sum ./ 
 
 # Download all dependencies
 RUN go mod download
