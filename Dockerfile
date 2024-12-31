@@ -13,11 +13,8 @@ RUN go mod download
 # Copy the source code into the container
 COPY . .
 
-# List the contents of /app to verify the files
-RUN ls -l /app
-
-# Build the application with specific flags for a static binary
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+# Build the application and the migration tool (if it's a Go file)
+RUN CGO_ENABLED=0 GOOS=linux go build -o main . && go build -o migrate ./migrate/migrate.go
 
 # Final stage (without Go installed)
 FROM alpine:latest
@@ -30,12 +27,10 @@ WORKDIR /root/
 
 # Copy the binary from the builder stage
 COPY --from=builder /app/main .
-
-# Copy the migration folder (if required for migrations)
-COPY --from=builder /app/migrate ./migrate
+COPY --from=builder /app/migrate .
 
 # Expose port 8080
 EXPOSE 8080
 
-# Command to run the application
-CMD ["./main"]
+# Command to run migrations and then start the application
+CMD ["sh", "-c", "./migrate && ./main"]
