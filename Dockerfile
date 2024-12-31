@@ -1,5 +1,5 @@
 # Build stage
-FROM golang:1.21 AS builder
+FROM golang:1.21.5 AS builder
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -35,4 +35,4 @@ COPY --from=builder /app/migrate ./migrate
 EXPOSE 8080
 
 # Command to run migrations and then start the application
-CMD ["sh", "-c", "go run migrate/migrate.go && ./main"]
+CMD ["sh", "-c", "./main"]
