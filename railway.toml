@@ -2,8 +2,8 @@
 builder = "dockerfile"
 
 [deploy]
-# Comando modificado para ejecutar las migraciones y luego el binario compilado
-startCommand = "./migrate/migrate.go && ./main"
+# Solo ejecuta el binario ya compilado, no necesitas ejecutar migraciones aquí
+startCommand = "./main"
 healthcheckPath = "/healthz"
 healthcheckTimeout = 100
 restartPolicyType = "on_failure"
