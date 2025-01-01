@@ -2,12 +2,8 @@
 builder = "dockerfile"
 
 [deploy]
-# Solo ejecuta el binario ya compilado, no necesitas ejecutar migraciones aquí
-startCommand = "./main"
-
-# Primero ejecutamos las migraciones, luego iniciamos la aplicación
-3startCommand = "sh -c 'sleep 5 && ./migrate && ./main'"
-
+startCommand = "./start.sh"
 healthcheckPath = "/healthz"
-healthcheckTimeout = 200
+healthcheckTimeout = 300
 restartPolicyType = "on_failure"
+

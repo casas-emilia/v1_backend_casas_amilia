@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -22,37 +23,25 @@ func ConnectToDB() {
 	dbName := os.Getenv("DB_NAME")
 
 	// Verificar si todas las variables de entorno están configuradas
-	requiredEnv := map[string]string{
-		"DB_USER":     dbUser,
-		"DB_PASSWORD": dbPassword,
-		"DB_HOST":     dbHost,
-		"DB_PORT":     dbPort,
-		"DB_NAME":     dbName,
-	}
-
-	for key, value := range requiredEnv {
-		if value == "" {
-			log.Fatalf("Falta configurar la variable de entorno: %s", key)
-		}
+	if dbUser == "" || dbPassword == "" || dbHost == "" || dbPort == "" || dbName == "" {
+		log.Fatal("Faltan variables de entorno para la conexión a la base de datos")
 	}
 
 	// Crear el DSN (Data Source Name) utilizando las variables de entorno
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", dbUser, dbPassword, dbHost, dbPort, dbName)
 
-	// Conectar a la base de datos
-	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("Error al conectar a la base de datos: %v", err)
+	// Intentar conectar a la base de datos con reintentos
+	for i := 0; i < 5; i++ {
+		DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+		if err == nil {
+			break
+		}
+		log.Printf("Intento %d: Error al conectar a la base de datos: %v", i+1, err)
+		time.Sleep(5 * time.Second)
 	}
 
-	// Validar la conexión
-	sqlDB, err := DB.DB()
 	if err != nil {
-		log.Fatalf("Error al obtener la conexión de la base de datos: %v", err)
-	}
-
-	if err = sqlDB.Ping(); err != nil {
-		log.Fatalf("No se pudo conectar a la base de datos: %v", err)
+		log.Fatal("Failed to connect DB after multiple attempts:", err)
 	}
 
 	log.Println("Conexión a la base de datos exitosa")

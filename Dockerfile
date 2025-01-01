@@ -14,23 +14,30 @@ RUN go mod download
 COPY . .
 
 # Build the application and the migration tool
-RUN CGO_ENABLED=0 GOOS=linux go build -o main . && go build -o migrate ./migrate/migrate.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o main . && CGO_ENABLED=0 GOOS=linux go build -o migrate ./migrate/migrate.go
 
-# Final stage (without Go installed)
+# Final stage
 FROM alpine:latest
 
-# Add CA certificates (necessary for HTTPS connections)
-RUN apk --no-cache add ca-certificates
+# Add CA certificates and timezone data
+RUN apk --no-cache add ca-certificates tzdata
 
 # Set the working directory
 WORKDIR /root/
 
-# Copy the binary from the builder stage
+# Copy the binaries from the builder stage
 COPY --from=builder /app/main .
 COPY --from=builder /app/migrate .
 
 # Expose port 8080
 EXPOSE 8080
 
-# Command to run migrations and then start the application
-CMD ["sh", "-c", "./migrate && ./main"]
+# Create a startup script
+RUN echo '#!/bin/sh' > start.sh && \
+    echo './migrate' >> start.sh && \
+    echo './main' >> start.sh && \
+    chmod +x start.sh
+
+# Set the startup command
+CMD ["./start.sh"]
+
