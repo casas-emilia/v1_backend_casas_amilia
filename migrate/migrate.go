@@ -47,7 +47,7 @@ func main() {
 }
 
 func seedInitialData() {
-	// Create super_administrador role
+	// Crear el rol super_administrador
 	superAdminRole := models.Rol{
 		NombreRol:      "super_administrador",
 		DescripcionRol: "Super administrador del sistema",
@@ -56,6 +56,28 @@ func seedInitialData() {
 	if result.Error != nil {
 		log.Fatalf("Error al crear el rol super_administrador: %v", result.Error)
 	}
+
+	// Crear el rol administrador
+	adminRole := models.Rol{
+		NombreRol:      "administrador",
+		DescripcionRol: "Administrador del sistema con permisos avanzados",
+	}
+	result = configs.DB.Create(&adminRole)
+	if result.Error != nil {
+		log.Fatalf("Error al crear el rol administrador: %v", result.Error)
+	}
+
+	// Crear el rol ejecutivo_ventas
+	salesExecutiveRole := models.Rol{
+		NombreRol:      "ejecutivo_ventas",
+		DescripcionRol: "Responsable de gestionar las ventas",
+	}
+	result = configs.DB.Create(&salesExecutiveRole)
+	if result.Error != nil {
+		log.Fatalf("Error al crear el rol ejecutivo_ventas: %v", result.Error)
+	}
+
+	log.Println("Roles iniciales creados correctamente")
 
 	// Crear una empresa
 	empresa := models.Empresa{
