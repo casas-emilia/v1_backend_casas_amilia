@@ -9,5 +9,5 @@ builder = "dockerfile"
 startCommand = "./migrate && ./main"
 
 healthcheckPath = "/healthz"
-healthcheckTimeout = 100
+healthcheckTimeout = 300
 restartPolicyType = "on_failure"
