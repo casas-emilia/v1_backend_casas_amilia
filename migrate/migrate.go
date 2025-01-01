@@ -80,7 +80,7 @@ func seedInitialData() {
 		EmpresaID:      empresa.ID,
 		Credencial: &models.Credencial{
 			Email:    "7.cristian.u@gmail.com",
-			Password: "password", // Reemplazar con la contraseña hasheada
+			Password: "$10$.Dqmp/b5tmezLXRRmSDbv.W4q0.6HFeaz/.UFvLf1Qm79.zsKz9bC", // Contraseña hasheada
 		},
 	}
 	result = configs.DB.Create(&superAdminUser)
