@@ -13,7 +13,7 @@ RUN go mod download
 # Copy the source code into the container
 COPY . .
 
-# Build the application and the migration tool (if it's a Go file)
+# Build the application and the migration tool
 RUN CGO_ENABLED=0 GOOS=linux go build -o main . && go build -o migrate ./migrate/migrate.go
 
 # Final stage (without Go installed)
@@ -33,7 +33,4 @@ COPY --from=builder /app/migrate .
 EXPOSE 8080
 
 # Command to run migrations and then start the application
-#CMD ["sh", "-c", "./migrate && ./main"]
-
-# Solo inicia el servidor
-CMD ["./main"]
+CMD ["sh", "-c", "./migrate && ./main"]

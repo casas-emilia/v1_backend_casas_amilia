@@ -22,8 +22,18 @@ func ConnectToDB() {
 	dbName := os.Getenv("DB_NAME")
 
 	// Verificar si todas las variables de entorno están configuradas
-	if dbUser == "" || dbPassword == "" || dbHost == "" || dbPort == "" || dbName == "" {
-		log.Fatal("Faltan variables de entorno para la conexión a la base de datos")
+	requiredEnv := map[string]string{
+		"DB_USER":     dbUser,
+		"DB_PASSWORD": dbPassword,
+		"DB_HOST":     dbHost,
+		"DB_PORT":     dbPort,
+		"DB_NAME":     dbName,
+	}
+
+	for key, value := range requiredEnv {
+		if value == "" {
+			log.Fatalf("Falta configurar la variable de entorno: %s", key)
+		}
 	}
 
 	// Crear el DSN (Data Source Name) utilizando las variables de entorno
@@ -32,7 +42,17 @@ func ConnectToDB() {
 	// Conectar a la base de datos
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatal("Failed to connect DB:", err)
+		log.Fatalf("Error al conectar a la base de datos: %v", err)
+	}
+
+	// Validar la conexión
+	sqlDB, err := DB.DB()
+	if err != nil {
+		log.Fatalf("Error al obtener la conexión de la base de datos: %v", err)
+	}
+
+	if err = sqlDB.Ping(); err != nil {
+		log.Fatalf("No se pudo conectar a la base de datos: %v", err)
 	}
 
 	log.Println("Conexión a la base de datos exitosa")
