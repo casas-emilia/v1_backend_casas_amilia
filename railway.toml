@@ -6,7 +6,7 @@ builder = "dockerfile"
 #startCommand = "./main"
 
 # Primero ejecutamos las migraciones, luego iniciamos la aplicación
-startCommand = "./migrate && ./main"
+startCommand = "sh -c 'sleep 5 && ./migrate && ./main'"
 
 healthcheckPath = "/healthz"
 healthcheckTimeout = 300
