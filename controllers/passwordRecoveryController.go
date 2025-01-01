@@ -48,7 +48,7 @@ func SolicitarRecuperacion(c *gin.Context) {
 
 	// Este link aparecera en el correo enviado por es sistema
 	// Ruta desarrollo local path: '/reset-password/:token'
-	link := "https://miapp.com/recuperar/" + token
+	link := "https://vifrontendcasasemilia-production.up.railway.app/reset-password/" + token
 	go utils.EnviarEmailRecuperacion(request.Email, link)
 
 	c.JSON(http.StatusOK, gin.H{"message": "Email enviado con las instrucciones"})
