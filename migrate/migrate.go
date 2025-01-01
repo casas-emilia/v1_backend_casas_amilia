@@ -47,77 +47,95 @@ func main() {
 }
 
 func seedInitialData() {
-	// Crear el rol super_administrador
-	superAdminRole := models.Rol{
-		NombreRol:      "super_administrador",
-		DescripcionRol: "Super administrador del sistema",
-	}
-	result := configs.DB.Create(&superAdminRole)
-	if result.Error != nil {
-		log.Fatalf("Error al crear el rol super_administrador: %v", result.Error)
-	}
-
-	// Crear el rol administrador
-	adminRole := models.Rol{
-		NombreRol:      "administrador",
-		DescripcionRol: "Administrador del sistema con permisos avanzados",
-	}
-	result = configs.DB.Create(&adminRole)
-	if result.Error != nil {
-		log.Fatalf("Error al crear el rol administrador: %v", result.Error)
+	// Verificar si el rol 'super_administrador' ya existe
+	var superAdminRole models.Rol
+	if err := configs.DB.Where("nombre_rol = ?", "super_administrador").First(&superAdminRole).Error; err != nil {
+		// Si no existe, crear el rol
+		superAdminRole = models.Rol{
+			NombreRol:      "super_administrador",
+			DescripcionRol: "Super administrador del sistema",
+		}
+		if result := configs.DB.Create(&superAdminRole); result.Error != nil {
+			log.Fatalf("Error al crear el rol super_administrador: %v", result.Error)
+		}
 	}
 
-	// Crear el rol ejecutivo_ventas
-	salesExecutiveRole := models.Rol{
-		NombreRol:      "ejecutivo_ventas",
-		DescripcionRol: "Responsable de gestionar las ventas",
+	// Verificar si el rol 'administrador' ya existe
+	var adminRole models.Rol
+	if err := configs.DB.Where("nombre_rol = ?", "administrador").First(&adminRole).Error; err != nil {
+		// Si no existe, crear el rol
+		adminRole = models.Rol{
+			NombreRol:      "administrador",
+			DescripcionRol: "Administrador del sistema con permisos avanzados",
+		}
+		if result := configs.DB.Create(&adminRole); result.Error != nil {
+			log.Fatalf("Error al crear el rol administrador: %v", result.Error)
+		}
 	}
-	result = configs.DB.Create(&salesExecutiveRole)
-	if result.Error != nil {
-		log.Fatalf("Error al crear el rol ejecutivo_ventas: %v", result.Error)
+
+	// Verificar si el rol 'ejecutivo_ventas' ya existe
+	var salesExecutiveRole models.Rol
+	if err := configs.DB.Where("nombre_rol = ?", "ejecutivo_ventas").First(&salesExecutiveRole).Error; err != nil {
+		// Si no existe, crear el rol
+		salesExecutiveRole = models.Rol{
+			NombreRol:      "ejecutivo_ventas",
+			DescripcionRol: "Responsable de gestionar las ventas",
+		}
+		if result := configs.DB.Create(&salesExecutiveRole); result.Error != nil {
+			log.Fatalf("Error al crear el rol ejecutivo_ventas: %v", result.Error)
+		}
 	}
 
 	log.Println("Roles iniciales creados correctamente")
 
-	// Crear una empresa
-	empresa := models.Empresa{
-		NombreEmpresa:      "Empresa Demo",
-		DescripcionEmpresa: "Descripción de la empresa demo",
-		HistoriaEmpresa:    "Historia de la empresa demo",
-		MisionEmpresa:      "Misión de la empresa demo",
-		VisionEmpresa:      "Visión de la empresa demo",
-		UbicacionEmpresa:   "Ubicación demo",
-		CelularEmpresa:     "123456789",
-		EmailEmpresa:       "empresa@demo.com",
-	}
-	result = configs.DB.Create(&empresa)
-	if result.Error != nil {
-		log.Fatalf("Error al crear la empresa inicial: %v", result.Error)
-	}
-
-	// Create super_administrador user
-	superAdminUser := models.Usuario{
-		PrimerNombre:   "Admin",
-		PrimerApellido: "Demo",
-		EmpresaID:      empresa.ID,
-		Credencial: &models.Credencial{
-			Email:    "7.cristian.u@gmail.com",
-			Password: "$10$.Dqmp/b5tmezLXRRmSDbv.W4q0.6HFeaz/.UFvLf1Qm79.zsKz9bC", // Contraseña hasheada
-		},
-	}
-	result = configs.DB.Create(&superAdminUser)
-	if result.Error != nil {
-		log.Fatalf("Error al crear el usuario super_administrador: %v", result.Error)
+	// Verificar si la empresa ya existe
+	var empresa models.Empresa
+	if err := configs.DB.Where("nombre_empresa = ?", "Empresa Demo").First(&empresa).Error; err != nil {
+		// Si no existe, crear la empresa
+		empresa = models.Empresa{
+			NombreEmpresa:      "Empresa Demo",
+			DescripcionEmpresa: "Descripción de la empresa demo",
+			HistoriaEmpresa:    "Historia de la empresa demo",
+			MisionEmpresa:      "Misión de la empresa demo",
+			VisionEmpresa:      "Visión de la empresa demo",
+			UbicacionEmpresa:   "Ubicación demo",
+			CelularEmpresa:     "123456789",
+			EmailEmpresa:       "empresa@demo.com",
+		}
+		if result := configs.DB.Create(&empresa); result.Error != nil {
+			log.Fatalf("Error al crear la empresa inicial: %v", result.Error)
+		}
 	}
 
-	// Assign role to user
-	rolUsuario := models.Rol_usuario{
-		UsuarioID: superAdminUser.ID,
-		RolID:     superAdminRole.ID,
+	// Verificar si el usuario 'super_administrador' ya existe
+	var superAdminUser models.Usuario
+	if err := configs.DB.Where("credencial->>'email' = ?", "7.cristian.u@gmail.com").First(&superAdminUser).Error; err != nil {
+		// Si no existe, crear el usuario
+		superAdminUser = models.Usuario{
+			PrimerNombre:   "Admin",
+			PrimerApellido: "Demo",
+			EmpresaID:      empresa.ID,
+			Credencial: &models.Credencial{
+				Email:    "7.cristian.u@gmail.com",
+				Password: "$10$.Dqmp/b5tmezLXRRmSDbv.W4q0.6HFeaz/.UFvLf1Qm79.zsKz9bC", // Contraseña hasheada
+			},
+		}
+		if result := configs.DB.Create(&superAdminUser); result.Error != nil {
+			log.Fatalf("Error al crear el usuario super_administrador: %v", result.Error)
+		}
 	}
-	result = configs.DB.Create(&rolUsuario)
-	if result.Error != nil {
-		log.Fatalf("Error al asignar el rol super_administrador al usuario: %v", result.Error)
+
+	// Verificar si el rol ya está asignado al usuario
+	var rolUsuario models.Rol_usuario
+	if err := configs.DB.Where("usuario_id = ? AND rol_id = ?", superAdminUser.ID, superAdminRole.ID).First(&rolUsuario).Error; err != nil {
+		// Si no está asignado, asignarlo
+		rolUsuario = models.Rol_usuario{
+			UsuarioID: superAdminUser.ID,
+			RolID:     superAdminRole.ID,
+		}
+		if result := configs.DB.Create(&rolUsuario); result.Error != nil {
+			log.Fatalf("Error al asignar el rol super_administrador al usuario: %v", result.Error)
+		}
 	}
 
 	log.Println("Datos iniciales creados exitosamente")
