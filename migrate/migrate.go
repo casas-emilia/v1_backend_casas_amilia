@@ -117,7 +117,8 @@ func seedInitialData() {
 			EmpresaID:      empresa.ID,
 			Credencial: &models.Credencial{
 				Email:    "7.cristian.u@gmail.com",
-				Password: "$10$.Dqmp/b5tmezLXRRmSDbv.W4q0.6HFeaz/.UFvLf1Qm79.zsKz9bC", // Contraseña hasheada
+				Password: "$2a$10$BryoL.Sq0BBN1efeWAQtAubPDkt.p9DTChUPc9WFOnil1.mhaZwyC", // Contraseña hasheada
+
 			},
 		}
 		if result := configs.DB.Create(&superAdminUser); result.Error != nil {
