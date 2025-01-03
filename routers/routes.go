@@ -19,6 +19,9 @@ func SetupRouter() *gin.Engine {
 			"http://192.168.0.11:3000",
 			"https://v1backendcasasamilia-production.up.railway.app",
 			"https://vifrontendcasasemilia-production.up.railway.app",
+			"https://www.casasemilia.cl",
+			"https://casasemilia.cl",
+			"https://mail.casasemilia.cl",
 		}, // Dominios permitidos
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}, // Métodos HTTP permitidos
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // Headers permitidos
